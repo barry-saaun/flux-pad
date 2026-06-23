@@ -2,6 +2,8 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { store } from './config'
+import type { EditorConfig } from './config'
 
 function createWindow(): void {
   // Create the browser window.
@@ -51,6 +53,12 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+
+  ipcMain.handle('config:get', () => store.store)
+  ipcMain.handle('config:set', <K extends keyof EditorConfig>(_e, key: K, value: EditorConfig[K]) => {
+    store.set(key, value)
+  })
+  ipcMain.handle('config:reset', () => store.reset(...(Object.keys(store.store) as (keyof EditorConfig)[])))
 
   createWindow()
 
