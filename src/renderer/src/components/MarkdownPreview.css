@@ -1,0 +1,206 @@
+/*
+ * MarkdownPreview.css
+ *
+ * Bridges semantic --color-* CSS vars (set on :root by applyThemeVars) into
+ * Tailwind Typography's --tw-prose-invert-* tokens so the preview
+ * automatically re-colours when the theme changes — no JS required.
+ *
+ * Fallbacks are Catppuccin Mocha hex values — cold-start defaults only,
+ * not theme-specific logic. Any theme that calls applyThemeVars overwrites them.
+ */
+
+/* ─── Prose token overrides ─────────────────────────────────────────────── */
+@layer base {
+  .markdown-preview {
+    /* Map semantic --color-* vars → Tailwind Typography tokens.
+       Fallbacks are Catppuccin Mocha values for the window before applyThemeVars fires. */
+    --tw-prose-invert-body: var(--color-text, #cdd6f4);
+    --tw-prose-invert-headings: var(--color-text, #cdd6f4);
+    --tw-prose-invert-lead: var(--color-subtext1, #bac2de);
+    --tw-prose-invert-links: var(--color-accent, #cba6f7);
+    --tw-prose-invert-bold: var(--color-text, #cdd6f4);
+    --tw-prose-invert-counters: var(--color-overlay1, #7f849c);
+    --tw-prose-invert-bullets: var(--color-overlay1, #7f849c);
+    --tw-prose-invert-hr: var(--color-surface1, #313244);
+    --tw-prose-invert-quotes: var(--color-subtext0, #a6adc8);
+    --tw-prose-invert-quote-borders: var(--color-surface2, #45475a);
+    --tw-prose-invert-captions: var(--color-overlay0, #6c7086);
+    --tw-prose-invert-code: var(--color-text, #cdd6f4);
+    --tw-prose-invert-pre-code: var(--color-text, #cdd6f4);
+    --tw-prose-invert-pre-bg: var(--color-mantle, #181825);
+    --tw-prose-invert-th-borders: var(--color-surface2, #45475a);
+    --tw-prose-invert-td-borders: var(--color-surface1, #313244);
+  }
+}
+
+/* ─── Layout & reading rhythm ───────────────────────────────────────────── */
+@layer utilities {
+  .markdown-preview {
+    /* Constrain line length — prose max-w-none is intentional on the outer
+       wrapper, but the inner readable column is set here via padding so the
+       scrollbar stays at the panel edge. */
+    --_preview-h-pad: clamp(2rem, 6vw, 5rem);
+  }
+
+  .markdown-preview > div {
+    padding-inline: var(--_preview-h-pad);
+    /* Cap readable measure (~72ch) while the outer container fills the panel */
+    max-width: min(72ch, 100%);
+    margin-inline: auto;
+  }
+
+  /* Body text — 16 px equivalent, generous leading for long-form reading */
+  .markdown-preview .prose {
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+
+  /* Headings */
+  /* Tighter leading on headings */
+  .markdown-preview .prose :is(h1, h2, h3, h4, h5, h6) {
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    font-weight: 700;
+    /* Extra breathing room above headings for visual rhythm */
+    margin-top: 2em;
+    margin-bottom: 0.5em;
+  }
+
+  .markdown-preview .prose h1 {
+    font-size: 2rem;
+    margin-top: 0;
+  }
+  .markdown-preview .prose h2 {
+    font-size: 1.5rem;
+    border-bottom: 1px solid var(--color-surface1, #313244);
+    padding-bottom: 0.3em;
+  }
+  .markdown-preview .prose h3 {
+    font-size: 1.25rem;
+  }
+  .markdown-preview .prose h4 {
+    font-size: 1.05rem;
+  }
+
+  /* ── Paragraphs ── */
+  .markdown-preview .prose p {
+    margin-top: 0;
+    margin-bottom: 1.25em;
+  }
+
+  /* ── Bold ── */
+  /* Explicit weight so fonts without a 700 face don't silently go semibold */
+  .markdown-preview .prose strong {
+    font-weight: 700;
+    color: var(--color-text, #cdd6f4);
+  }
+
+  /* ── Blockquote ── */
+  /* Remove Tailwind Typography's auto-curly-quotes entirely */
+  .markdown-preview .prose blockquote p::before,
+  .markdown-preview .prose blockquote p::after {
+    content: none;
+  }
+
+  .markdown-preview .prose blockquote {
+    font-style: normal;
+    border-left: 3px solid var(--color-accent, #cba6f7);
+    background-color: color-mix(in srgb, var(--color-surface0, #313244) 60%, transparent);
+    border-radius: 0 4px 4px 0;
+    padding: 0.75em 1.25em;
+    color: var(--color-subtext0, #a6adc8);
+    margin-inline: 0;
+  }
+
+  /* ── Inline code ── */
+  .markdown-preview .prose :not(pre) > code {
+    background-color: var(--color-surface0, #313244);
+    color: var(--color-accent, #cba6f7);
+    border-radius: 4px;
+    padding: 0.15em 0.4em;
+    font-size: 0.875em;
+    /* Prevent the ::before / ::after backticks Typography adds */
+  }
+
+  .markdown-preview .prose :not(pre) > code::before,
+  .markdown-preview .prose :not(pre) > code::after {
+    content: none;
+  }
+
+  /* ── Fenced code blocks ── */
+  .markdown-preview .prose pre {
+    background-color: var(--color-mantle, #181825);
+    border: 1px solid var(--color-surface1, #313244);
+    border-radius: 6px;
+    padding: 1em 1.25em;
+    overflow-x: auto;
+    /* Slightly smaller than body so it reads as a distinct zone */
+    font-size: 0.875em;
+    line-height: 1.65;
+  }
+
+  /* highlight.js injects <code> inside <pre>; reset inherited prose styles */
+  .markdown-preview .prose pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    font-size: inherit;
+    border-radius: 0;
+  }
+
+  /* ── Lists ── */
+  .markdown-preview .prose ul,
+  .markdown-preview .prose ol {
+    padding-left: 1.5em;
+    margin-bottom: 1.25em;
+  }
+
+  .markdown-preview .prose li {
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+  }
+
+  /* Nested lists — slightly muted bullets to signal depth */
+  .markdown-preview .prose li > ul,
+  .markdown-preview .prose li > ol {
+    margin-top: 0.3em;
+    margin-bottom: 0;
+  }
+
+  /* ── Horizontal rule ── */
+  .markdown-preview .prose hr {
+    border-color: var(--color-surface1, #313244);
+    margin-block: 2em;
+  }
+
+  /* ── Tables ── */
+  .markdown-preview .prose table {
+    font-size: 0.9em;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .markdown-preview .prose th {
+    background-color: var(--color-surface0, #313244);
+    font-weight: 600;
+    text-align: left;
+    padding: 0.5em 0.75em;
+  }
+
+  .markdown-preview .prose td {
+    padding: 0.4em 0.75em;
+    border-bottom: 1px solid var(--color-surface1, #313244);
+  }
+
+  /* ── Links ── */
+  .markdown-preview .prose a {
+    color: var(--color-accent, #cba6f7);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-accent, #cba6f7) 40%, transparent);
+  }
+
+  .markdown-preview .prose a:hover {
+    text-decoration-color: var(--color-accent, #cba6f7);
+  }
+}
