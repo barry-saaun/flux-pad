@@ -1,0 +1,16 @@
+/*
+ * Targets CodeMirror's own .cm-editor element directly.
+ * The wrapper div background does nothing — CM paints its own background
+ * on .cm-editor, overriding any parent. Setting it here via --color-base
+ * means the background is correct immediately, before the async theme
+ * extension resolves.
+ */
+.cm-editor {
+  height: 100%;
+  background-color: var(--color-base, #1e1e2e);
+}
+
+/* The scroller is the scrollable inner container — needs the same treatment */
+.cm-scroller {
+  background-color: var(--color-base, #1e1e2e);
+}
