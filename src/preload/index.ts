@@ -1,14 +1,14 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import type { EditorConfig } from '../main/config'
+import { type FluxPadConfig } from '../main/config'
 
 const api = {
   config: {
-    get: (): Promise<EditorConfig> => ipcRenderer.invoke('config:get'),
-    set: <K extends keyof EditorConfig>(key: K, value: EditorConfig[K]): Promise<void> =>
+    get: (): Promise<FluxPadConfig> => ipcRenderer.invoke('config:get'),
+    set: <K extends keyof FluxPadConfig>(key: K, value: FluxPadConfig[K]): Promise<void> =>
       ipcRenderer.invoke('config:set', key, value),
-    reset: (): Promise<void> => ipcRenderer.invoke('config:reset'),
-  },
+    reset: (): Promise<void> => ipcRenderer.invoke('config:reset')
+  }
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
