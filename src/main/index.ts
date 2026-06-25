@@ -2,8 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { store } from './config'
-import type { EditorConfig } from './config'
+import { store, type FluxPadConfig } from './config/index'
 
 function createWindow(): void {
   // Create the browser window.
@@ -11,6 +10,8 @@ function createWindow(): void {
     width: 900,
     height: 670,
     show: false,
+    transparent: true,
+    frame: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -55,10 +56,15 @@ app.whenReady().then(() => {
   ipcMain.on('ping', () => console.log('pong'))
 
   ipcMain.handle('config:get', () => store.store)
-  ipcMain.handle('config:set', <K extends keyof EditorConfig>(_e, key: K, value: EditorConfig[K]) => {
-    store.set(key, value)
-  })
-  ipcMain.handle('config:reset', () => store.reset(...(Object.keys(store.store) as (keyof EditorConfig)[])))
+  ipcMain.handle(
+    'config:set',
+    <K extends keyof FluxPadConfig>(_e, key: K, value: FluxPadConfig[K]) => {
+      store.set(key, value)
+    }
+  )
+  ipcMain.handle('config:reset', () =>
+    store.reset(...(Object.keys(store.store) as (keyof FluxPadConfig)[]))
+  )
 
   createWindow()
 

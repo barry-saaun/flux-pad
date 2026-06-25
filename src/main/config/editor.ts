@@ -1,5 +1,3 @@
-import Store from 'electron-store'
-
 export type PropertiesInDocument = 'visible' | 'hidden' | 'source'
 
 export type EditorConfig = {
@@ -22,7 +20,7 @@ export type EditorConfig = {
   indentVisualWidth: number
 }
 
-export const DEFAULT_CONFIG: EditorConfig = {
+export const DEFAULT_EDITOR_CONFIG: EditorConfig = {
   // Display
   readableLineLength: true,
   strictLineBreaks: false,
@@ -41,8 +39,3 @@ export const DEFAULT_CONFIG: EditorConfig = {
   indentUsingTabs: false,
   indentVisualWidth: 4
 }
-
-export const store = new Store<EditorConfig>({
-  name: 'editor-config',
-  defaults: DEFAULT_CONFIG
-})
