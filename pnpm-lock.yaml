@@ -41,6 +41,9 @@ importers:
       '@lezer/highlight':
         specifier: ^1.2.3
         version: 1.2.3
+      '@replit/codemirror-vim':
+        specifier: ^6.3.0
+        version: 6.3.0(@codemirror/commands@6.10.3)(@codemirror/language@6.12.3)(@codemirror/search@6.7.1)(@codemirror/state@6.6.0)(@codemirror/view@6.43.1)
       '@uiw/codemirror-theme-gruvbox-dark':
         specifier: ^4.25.10
         version: 4.25.10(@codemirror/language@6.12.3)(@codemirror/state@6.6.0)(@codemirror/view@6.43.1)
@@ -814,6 +817,15 @@ packages:
   '@pkgr/core@0.3.6':
     resolution: {integrity: sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==}
     engines: {node: ^14.18.0 || >=16.0.0}
+
+  '@replit/codemirror-vim@6.3.0':
+    resolution: {integrity: sha512-aTx931ULAMuJx6xLf7KQDOL7CxD+Sa05FktTDrtLaSy53uj01ll3Zf17JdKsriER248oS55GBzg0CfCTjEneAQ==}
+    peerDependencies:
+      '@codemirror/commands': 6.x.x
+      '@codemirror/language': 6.x.x
+      '@codemirror/search': 6.x.x
+      '@codemirror/state': 6.x.x
+      '@codemirror/view': 6.x.x
 
   '@rolldown/pluginutils@1.0.0-rc.3':
     resolution: {integrity: sha512-eybk3TjzzzV97Dlj5c+XrBFW57eTNhzod66y9HrBlzJ6NsCrWCp/2kaPS3K9wJmurBC0Tdw4yPjXKZqlznim3Q==}
@@ -4175,6 +4187,14 @@ snapshots:
       webcrypto-core: 1.9.2
 
   '@pkgr/core@0.3.6': {}
+
+  '@replit/codemirror-vim@6.3.0(@codemirror/commands@6.10.3)(@codemirror/language@6.12.3)(@codemirror/search@6.7.1)(@codemirror/state@6.6.0)(@codemirror/view@6.43.1)':
+    dependencies:
+      '@codemirror/commands': 6.10.3
+      '@codemirror/language': 6.12.3
+      '@codemirror/search': 6.7.1
+      '@codemirror/state': 6.6.0
+      '@codemirror/view': 6.43.1
 
   '@rolldown/pluginutils@1.0.0-rc.3': {}
 

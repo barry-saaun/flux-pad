@@ -32,6 +32,7 @@
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
     "@lezer/highlight": "^1.2.3",
+    "@replit/codemirror-vim": "^6.3.0",
     "@uiw/codemirror-theme-gruvbox-dark": "^4.25.10",
     "@uiw/codemirror-themes": "^4.25.10",
     "@uiw/react-codemirror": "^4.25.10",

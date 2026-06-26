@@ -55,7 +55,7 @@
 
   /* Body text — 1rem = 16px equivalent, generous leading for long-form reading */
   .markdown-preview .prose {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     line-height: 1.8;
   }
 

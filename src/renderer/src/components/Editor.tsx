@@ -1,12 +1,15 @@
 import { useRef, useEffect, useState } from 'react'
-import ReactCodeMirror, { Extension, lineNumbers, ReactCodeMirrorRef } from '@uiw/react-codemirror'
+import ReactCodeMirror, { Extension, ReactCodeMirrorRef } from '@uiw/react-codemirror'
+import { vim } from '@replit/codemirror-vim'
+import { basicSetup } from '@uiw/react-codemirror'
 import { markdown } from '@codemirror/lang-markdown'
 import { loadCatppuccinTheme } from '../themes/catppuccin'
 import type { AppearanceConfig } from '../../../main/config/appearance'
 import MarkdownPreview from './MarkdownPreview'
 import './Editor.css'
 
-const baseExtensions = [markdown(), lineNumbers()]
+// TODO: remove the VIM from the base extension later
+const baseExtensions = [basicSetup(), vim(), markdown()]
 
 const MyEditor = () => {
   const viewRef = useRef<ReactCodeMirrorRef>(null)
