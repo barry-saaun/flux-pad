@@ -9,6 +9,9 @@
  * not theme-specific logic. Any theme that calls applyThemeVars overwrites them.
  */
 
+/* Declare layer order — preview overrides must win over Tailwind's utilities */
+@layer base, components, utilities, preview;
+
 /* ─── Prose token overrides ─────────────────────────────────────────────── */
 @layer base {
   .markdown-preview {
@@ -44,48 +47,29 @@
 
   .markdown-preview > div {
     padding-inline: var(--_preview-h-pad);
+    padding-block: 2.5rem;
     /* Cap readable measure (~72ch) while the outer container fills the panel */
     max-width: min(72ch, 100%);
     margin-inline: auto;
   }
 
-  /* Body text — 16 px equivalent, generous leading for long-form reading */
+  /* Body text — 1rem = 16px equivalent, generous leading for long-form reading */
   .markdown-preview .prose {
-    font-size: 1rem;
+    font-size: 0.75rem;
     line-height: 1.8;
-  }
-
-  /* Headings */
-  /* Tighter leading on headings */
-  .markdown-preview .prose :is(h1, h2, h3, h4, h5, h6) {
-    line-height: 1.25;
-    letter-spacing: -0.015em;
-    font-weight: 700;
-    /* Extra breathing room above headings for visual rhythm */
-    margin-top: 2em;
-    margin-bottom: 0.5em;
-  }
-
-  .markdown-preview .prose h1 {
-    font-size: 2rem;
-    margin-top: 0;
-  }
-  .markdown-preview .prose h2 {
-    font-size: 1.5rem;
-    border-bottom: 1px solid var(--color-surface1, #313244);
-    padding-bottom: 0.3em;
-  }
-  .markdown-preview .prose h3 {
-    font-size: 1.25rem;
-  }
-  .markdown-preview .prose h4 {
-    font-size: 1.05rem;
   }
 
   /* ── Paragraphs ── */
   .markdown-preview .prose p {
     margin-top: 0;
-    margin-bottom: 1.25em;
+    margin-bottom: 1.5em;
+  }
+
+  /* remarkBreaks turns single newlines into <br> inside the same <p>.
+     Add a half-line gap so those soft breaks don't read as solid blocks. */
+  .markdown-preview .prose br {
+    display: block;
+    margin-top: 0.5em;
   }
 
   /* ── Bold ── */
@@ -103,11 +87,11 @@
   }
 
   .markdown-preview .prose blockquote {
-    font-style: normal;
-    border-left: 3px solid var(--color-accent, #cba6f7);
-    background-color: color-mix(in srgb, var(--color-surface0, #313244) 60%, transparent);
-    border-radius: 0 4px 4px 0;
-    padding: 0.75em 1.25em;
+    font-style: italic; /* italic signals "quoted voice", code blocks are never italic */
+    border-left: 3px solid var(--color-overlay1, #7f849c); /* muted — accent was too similar to inline code */
+    background-color: transparent; /* no bg — clear distinction from pre which has one */
+    border-radius: 0;
+    padding: 0.25em 1em;
     color: var(--color-subtext0, #a6adc8);
     margin-inline: 0;
   }
@@ -130,13 +114,18 @@
   /* ── Fenced code blocks ── */
   .markdown-preview .prose pre {
     background-color: var(--color-mantle, #181825);
+    /* Explicit border — no left-only accent, full outline to read as a distinct zone */
     border: 1px solid var(--color-surface1, #313244);
+    border-left-width: 1px; /* reset any blockquote border-left bleed */
     border-radius: 6px;
     padding: 1em 1.25em;
     overflow-x: auto;
-    /* Slightly smaller than body so it reads as a distinct zone */
     font-size: 0.875em;
     line-height: 1.65;
+    /* Undo any blockquote chrome that Tailwind Typography may cascade onto pre */
+    font-style: normal;
+    color: var(--color-text, #cdd6f4);
+    margin-inline: 0;
   }
 
   /* highlight.js injects <code> inside <pre>; reset inherited prose styles */
@@ -146,6 +135,14 @@
     padding: 0;
     font-size: inherit;
     border-radius: 0;
+    /* Prevent inline-code accent colour leaking into fenced blocks */
+    color: inherit;
+  }
+
+  /* Fenced code block inside a blockquote — prevent double-styling */
+  .markdown-preview .prose blockquote pre {
+    border-left-color: var(--color-surface1, #313244);
+    background-color: var(--color-mantle, #181825);
   }
 
   /* ── Lists ── */
@@ -203,4 +200,48 @@
   .markdown-preview .prose a:hover {
     text-decoration-color: var(--color-accent, #cba6f7);
   }
+}
+
+/* ─── Heading overrides ─────────────────────────────────────────────────── */
+/* These rules are intentionally NOT inside any @layer.
+   Unlayered CSS wins over all @layer rules, including Tailwind Typography's
+   prose styles — which are also unlayered and would otherwise dominate. */
+.markdown-preview .prose :is(h1, h2, h3, h4, h5, h6) {
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.markdown-preview .prose h1 {
+  font-size: 2rem;
+}
+
+.markdown-preview .prose h2 {
+  font-size: 1.5rem;
+  /* border-bottom: 1px solid var(--color-surface1, #313244); */
+  padding-bottom: 0.3em;
+}
+
+.markdown-preview .prose h3 {
+  font-size: 1.25rem;
+}
+
+.markdown-preview .prose h4 {
+  font-size: 1.15rem;
+}
+.markdown-preview .prose h5 {
+  font-size: 1.05rem;
+}
+
+.markdown-preview .prose h6 {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.markdown-preview .prose strong {
+  font-weight: 700;
+  color: #ffb343;
 }
