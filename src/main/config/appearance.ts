@@ -27,7 +27,7 @@ export type AppearanceConfig =
 
 export const DEFAULT_APPEARANCE_CONFIG: AppearanceConfig = {
   theme: 'catppuccin',
-  mode: 'light',
+  mode: 'dark',
   hasVariant: true,
-  variant: 'frappe'
+  variant: 'macchiato'
 }

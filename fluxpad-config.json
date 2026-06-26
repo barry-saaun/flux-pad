@@ -1,0 +1,24 @@
+{
+	"appearance": {
+		"theme": "catppuccin",
+		"mode": "dark",
+		"hasVariant": true,
+		"variant": "macchiato"
+	},
+	"editor": {
+		"readableLineLength": true,
+		"strictLineBreaks": false,
+		"propertiesInDocument": "visible",
+		"foldHeading": true,
+		"foldIndent": true,
+		"lineNumbers": false,
+		"indentationGuides": false,
+		"rightToLeft": false,
+		"spellcheck": true,
+		"autoPairBrackets": false,
+		"autoPairMarkdownSyntax": false,
+		"smartLists": false,
+		"indentUsingTabs": false,
+		"indentVisualWidth": 4
+	}
+}
