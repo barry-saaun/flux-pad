@@ -2,7 +2,12 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { store, type FluxPadConfig } from './config/index'
+import {
+  registerConfigHandlers,
+  registerAppStateHandlers,
+  store,
+  appStore
+} from './config/index'
 
 function createWindow(): void {
   // Create the browser window.
@@ -55,16 +60,11 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
-  ipcMain.handle('config:get', () => store.store)
-  ipcMain.handle(
-    'config:set',
-    <K extends keyof FluxPadConfig>(_e, key: K, value: FluxPadConfig[K]) => {
-      store.set(key, value)
-    }
-  )
-  ipcMain.handle('config:reset', () =>
-    store.reset(...(Object.keys(store.store) as (keyof FluxPadConfig)[]))
-  )
+  registerConfigHandlers()
+  registerAppStateHandlers()
+  // Force stores to write defaults to disk on first launch
+  store.store
+  appStore.store
 
   createWindow()
 

@@ -1,22 +1,21 @@
-import { useEffect, useRef, useState } from 'react'
-import type { PanelImperativeHandle, PanelSize } from 'react-resizable-panels'
+import { useEffect } from 'react'
 import MyEditor from './components/Editor'
 import { Sidebar } from './components/Sidebar'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { applyThemeVars } from './themes/tokens'
 import { catppuccinTokens } from './themes/catppuccin'
 import { ChevronsLeft, ChevronsRight } from 'lucide-react'
-
-const COLLAPSED_SIZE = 10 
-const SIZEBAR_SIZE_MAX = 600
-const SIZEBAR_SIZE_MIN = 200
-const SIZEBAR_SIZE_DEFAULT = 350
+import useSidebarPanel from './hooks/useSidbarPanel'
 
 function App(): React.JSX.Element {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const panelRef = useRef<PanelImperativeHandle | null>(null)
-  const sidebarElementRef = useRef<HTMLDivElement | null>(null)
-  const isAnimatingRef = useRef(false)
+  const {
+    panelRef,
+    sidebarElementRef,
+    toggleSidebar,
+    handleSidebarResize,
+    sidebarCollapsed,
+    SIDEBAR_CONSTANTS
+  } = useSidebarPanel()
 
   useEffect(() => {
     window.api.config.get().then(({ appearance }) => {
@@ -25,31 +24,6 @@ function App(): React.JSX.Element {
       }
     })
   }, [])
-
-  function handleSidebarResize(size: PanelSize) {
-    setSidebarCollapsed(size.asPercentage <= COLLAPSED_SIZE)
-  }
-
-  function toggleSidebar() {
-    const panel = panelRef.current
-    const el = sidebarElementRef.current
-    if (!panel || !el || isAnimatingRef.current) return
-
-    isAnimatingRef.current = true
-    el.style.transition = 'flex 200ms ease'
-
-    requestAnimationFrame(() => {
-      if (sidebarCollapsed) {
-        panel.expand()
-      } else {
-        panel.collapse()
-      }
-      window.setTimeout(() => {
-        el.style.transition = ''
-        isAnimatingRef.current = false
-      }, 220)
-    })
-  }
 
   return (
     <div
@@ -61,11 +35,11 @@ function App(): React.JSX.Element {
         <ResizablePanel
           panelRef={panelRef}
           elementRef={sidebarElementRef}
-          defaultSize={SIZEBAR_SIZE_DEFAULT}
-          minSize={SIZEBAR_SIZE_MIN}
-          maxSize={SIZEBAR_SIZE_MAX}
+          defaultSize={SIDEBAR_CONSTANTS.SIZEBAR_SIZE_DEFAULT}
+          minSize={SIDEBAR_CONSTANTS.SIZEBAR_SIZE_MIN}
+          maxSize={SIDEBAR_CONSTANTS.SIZEBAR_SIZE_MAX}
           collapsible
-          collapsedSize={COLLAPSED_SIZE}
+          collapsedSize={SIDEBAR_CONSTANTS.COLLAPSED_SIZE}
           onResize={handleSidebarResize}
         >
           <Sidebar collapsed={sidebarCollapsed} />
@@ -79,7 +53,10 @@ function App(): React.JSX.Element {
             {/* Editor header — toggle button always lives here */}
             <div
               className="flex items-center gap-2 px-3 py-2 text-sm"
-              style={{ borderBottom: '1px solid var(--color-surface1)', color: 'var(--color-overlay2)' }}
+              style={{
+                borderBottom: '1px solid var(--color-surface1)',
+                color: 'var(--color-overlay2)'
+              }}
             >
               <button
                 onClick={toggleSidebar}
