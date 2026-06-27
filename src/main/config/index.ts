@@ -1,9 +1,17 @@
 import Store from 'electron-store'
 import { app, ipcMain } from 'electron'
-import path from 'path'
-import { type AppearanceConfig, DEFAULT_APPEARANCE_CONFIG } from './appearance'
+import {
+  type AppearanceConfig,
+  DEFAULT_APPEARANCE_CONFIG,
+  normalizeAppearanceConfig
+} from './appearance'
 import { type EditorConfig, DEFAULT_EDITOR_CONFIG } from './editor'
 
+export { appStore, registerAppStateHandlers, type AppState } from './app-state'
+
+// User-facing preferences that travel with the vault. Lives inside the vault
+// directory once the user picks one. The vault's own path is tracked in
+// AppState, not here — the config can't know its own location.
 export type FluxPadConfig = {
   appearance: AppearanceConfig
   editor: EditorConfig
@@ -11,7 +19,8 @@ export type FluxPadConfig = {
 
 const isDev = !app.isPackaged
 
-// In dev: write to project root. In prod: will be replaced with vault path.
+// TODO: once onboarding lands, point this at the chosen vault dir
+// (appStore.get('vault').dirPath) instead.
 const configDir = isDev ? app.getAppPath() : app.getPath('userData')
 
 export const store = new Store<FluxPadConfig>({
@@ -34,7 +43,11 @@ export function registerConfigHandlers(): void {
       key: K,
       value: FluxPadConfig[K]
     ): void => {
-      store.set(key, value)
+      const next =
+        key === 'appearance'
+          ? (normalizeAppearanceConfig(value as AppearanceConfig) as FluxPadConfig[K])
+          : value
+      store.set(key, next)
     }
   )
 
